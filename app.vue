@@ -15,7 +15,7 @@
             Notez <Icon name="mdi:pencil-circle-outline"></Icon>
           </h1>
           <p class="text-slate-300 bg-slate-900/40 w-fit p-1 px-3 mx-auto">
-            Loading...
+            {{ loadingText }}
           </p>
         </div>
       </section>
@@ -24,7 +24,14 @@
 </template>
 
 <script setup lang="ts">
-const { loadingActive, loadingText } = useAppLoading();
+const { loadingActive, loadingText, startLoading, stopLoading } =
+  useAppLoading();
+
+onMounted(async () => {
+  startLoading();
+  await useAuth().fetchUser(useNuxtApp().$fb.db);
+  stopLoading();
+});
 </script>
 
 <style scoped>

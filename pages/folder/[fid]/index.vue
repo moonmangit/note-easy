@@ -10,7 +10,10 @@
             </button>
           </section>
           <section class="flex justify-between text-sm">
-            <section>Folder "{{ $route.params.fid }}"</section>
+            <section>
+              <span class="text-slate-700 font-medium">Folder</span> /
+              {{ folder?.title }}
+            </section>
             <section class="flex gap-3">
               <button class="hover:underline">
                 <span>Oldest</span>
@@ -41,14 +44,14 @@
     </AppContentSection>
     <div for="aside" class="w-full md:w-[250px]">
       <div class="sticky top-4 flex flex-col gap-4">
-        <AppContentSection :title="`Details ${$route.params.fid}`">
+        <AppContentSection title="Details">
           <AppMetaCard
             :meta="{
-              title: 'Folder Title',
-              createdAt: '2021-09-01',
-              createdBy: 'John Doe',
-              updatedAt: '2021-09-01',
-              updatedBy: 'John Doe',
+              title: folder?.title || '',
+              createdAt: $dayjs(folder?.createdAt.toDate()).fromNow(),
+              updatedAt: $dayjs(folder?.updatedAt.toDate()).fromNow(),
+              createdBy: folder?.createdBy.name || '',
+              updatedBy: folder?.updatedBy.name || '',
             }"
           ></AppMetaCard>
         </AppContentSection>
@@ -73,7 +76,7 @@
           ></PageIndexTagList>
         </AppContentSection>
         <AppContentSection title="History">
-          <PageIndexHistoryList :histories="histories" />
+          <PageIndexHistoryList :histories="hist || []" />
         </AppContentSection>
       </div>
     </div>
@@ -81,39 +84,18 @@
 </template>
 
 <script lang="ts" setup>
-import { Timestamp } from "firebase/firestore";
-import type { AppHistory } from "~/components/page/index/HistoryList.vue";
+import type { NoteHistoryActions } from "~/assets/models/user";
 
-const histories = ref(
-  (() => {
-    let arr: AppHistory[] = [];
-    for (let i = 0; i < 10; i++) {
-      arr.push({
-        id: randomString(12),
-        action: randomFromArray([
-          "note:created",
-          "note:updated",
-          "note:deleted",
-        ]),
-        at: Timestamp.now(),
-        by: {
-          id: randomString(12),
-          name: randomFromArray(["John Doe", "Jane Doe"]),
-        },
-        targetNote: {
-          id: randomString(12),
-          fid: randomString(12),
-          title: randomFromArray([
-            "My First Note",
-            "My Second Note",
-            "My Third Note",
-          ]),
-        },
-      });
-    }
-    return arr;
-  })()
-);
+const folder = computed(() => {
+  return useAuth().userDoc?.folder.find((f) => f.id === useRoute().params.fid);
+});
+
+// Prepare hist
+const hist = computed(() => {
+  return useAuth().userDoc?.history.filter(
+    (hist) => hist.target.id === useRoute().params.fid
+  );
+});
 </script>
 
 <style></style>

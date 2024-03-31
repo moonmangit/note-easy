@@ -1,23 +1,40 @@
 <template>
   <div>
-    <ul
+    <TransitionGroup
+      name="list"
+      tag="ul"
       for="folder list"
-      class="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4"
+      class="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] lg:grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4"
     >
-      <li for="add" class="flex items-center justify-center gap-1">
+      <li
+        for="add"
+        class="flex items-center justify-center gap-1"
+        key="add"
+        @click="cont.open('create')"
+      >
         <Icon name="mdi:folder-plus" />
         <span>new Folder</span>
       </li>
-      <li v-for="i in 10" :key="i" @click="navigateTo(`/folder/${i}`)">
+      <li
+        v-for="folder in folders"
+        :key="folder.id"
+        @click="navigateTo(`/folder/${folder.id}`)"
+      >
         <div class="p-2 text-sm flex flex-col gap-1 h-full">
           <header class="flex flex-col gap-1">
             <section class="flex justify-between items-center">
-              <h3 class="font-medium">Folder {{ i }}</h3>
+              <h3 class="font-medium">{{ folder.title }}</h3>
               <section class="text-slate-400 flex gap-2">
-                <button class="text-xl hover:text-slate-500 duration-300">
+                <button
+                  class="text-xl hover:text-slate-500 duration-300"
+                  @click.stop="removeFolder(folder)"
+                >
                   <Icon name="mdi:delete"></Icon>
                 </button>
-                <button class="text-xl hover:text-slate-500 duration-300">
+                <button
+                  class="text-xl hover:text-slate-500 duration-300"
+                  @click.stop="cont.open('update', folder)"
+                >
                   <Icon name="mdi:pencil"></Icon>
                 </button>
               </section>
@@ -35,15 +52,63 @@
             </div>
           </main>
           <footer>
-            <p class="text-slate-400">{{ $dayjs(Date.now()).fromNow() }}</p>
+            <p class="text-slate-400">
+              {{ $dayjs(folder.updatedAt.toDate()).fromNow() }}
+            </p>
           </footer>
         </div>
       </li>
-    </ul>
+    </TransitionGroup>
+
+    <AppModal v-model="cont.modalActive.value">
+      <AppModalForm :cont="cont" #="{ defineField, errors }">
+        <AppInputGroup label="Title" :message="errors.title">
+          <input
+            type="text"
+            placeholder="Title ..."
+            v-model="defineField('title')[0].value"
+          />
+        </AppInputGroup>
+      </AppModalForm>
+    </AppModal>
   </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import {
+  noteFolderSchema,
+  type NoteFolder,
+  type NoteFolderSchema,
+  noteFolderModel,
+} from "~/assets/models/user";
+
+defineProps<{
+  folders: NoteFolder[];
+}>();
+
+// Create controller
+const cont = useModalForm<NoteFolderSchema, NoteFolder>({
+  title: "Folder",
+  schema: noteFolderSchema,
+  initialValues(record) {
+    return {
+      title: record.title,
+    };
+  },
+  handlers: {
+    async create(values) {
+      await noteFolderModel.create(values);
+    },
+    async update(record, values) {
+      await noteFolderModel.update(record, values);
+    },
+  },
+});
+async function removeFolder(target: NoteFolder) {
+  if (!confirm("Are you sure to delete this folder?")) return;
+  await noteFolderModel.remove(target);
+}
+</script>
 
 <style scoped>
 ul[for="folder list"] {
@@ -52,7 +117,20 @@ ul[for="folder list"] {
     @apply hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-300 duration-300;
     @apply hover:border-slate-400 cursor-pointer;
   }
-  > li[for="add"] {
-  }
+}
+
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  @apply duration-300;
+}
+
+.list-enter-from,
+.list-leave-to {
+  @apply opacity-0;
+}
+
+.list-leave-active {
+  @apply absolute;
 }
 </style>

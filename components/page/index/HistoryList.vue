@@ -1,7 +1,7 @@
 <template>
-  <ul class="text-xs flex flex-col gap-2">
+  <TransitionGroup tag="ul" name="list" class="text-xs flex flex-col gap-2">
     <li
-      v-for="hist in histories.splice(0, 6)"
+      v-for="hist in sortedHistories.slice(0, 7)"
       :key="hist.id"
       class="flex p-2 gap-2 items-center bg-slate-100"
     >
@@ -19,11 +19,11 @@
         }}</span>
         <span class="text-xs">
           {{ actionConf[hist.action].displayName }} :
-          {{ hist.targetNote.title }}
+          {{ hist.target.title }}
         </span>
       </section>
     </li>
-  </ul>
+  </TransitionGroup>
 </template>
 
 <script lang="ts" setup>
@@ -81,6 +81,25 @@ const actionConf: Record<
 const props = defineProps<{
   histories: AppHistory[];
 }>();
+
+const sortedHistories = computed(() =>
+  props.histories.sort((a, b) => b.at.toMillis() - a.at.toMillis())
+);
 </script>
 
-<style></style>
+<style scoped>
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  @apply duration-300;
+}
+
+.list-enter-from,
+.list-leave-to {
+  @apply opacity-0 translate-x-2;
+}
+
+.list-leave-active {
+  @apply absolute;
+}
+</style>
