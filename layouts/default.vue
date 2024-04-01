@@ -1,6 +1,6 @@
 <template>
   <div class="container mx-auto max-w-8xl px-4">
-    <header class="flex justify-between items-center">
+    <header class="flex justify-between items-center pb-4">
       <h1 class="text-xl font-bold py-4">
         Notez <Icon name="mdi:pencil-circle-outline"></Icon>
       </h1>

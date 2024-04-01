@@ -44,9 +44,10 @@
               :active-ids="activeTagIds"
             />
           </header>
-          <main class="whitespace-normal line-clamp-4 flex-1">
-            {{ note.content.first || "Select this note to start writing..." }}
-          </main>
+          <main
+            class="whitespace-normal line-clamp-4 flex-1"
+            v-html="note.content.first"
+          ></main>
           <footer>
             <p class="text-slate-400">
               {{ $dayjs(note.updatedAt.toDate()).fromNow() }}

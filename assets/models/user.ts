@@ -16,6 +16,12 @@ export function createUserDocRef() {
   return doc(useNuxtApp().$fb.db, `users/${useAuth().profile?.uid || ""}`);
 }
 
+// Note Chunks
+export type NoteChunk = {
+  content: string;
+  uid: string;
+};
+
 // Note History
 export type NoteHistoryTarget = {
   // represent the folder or note id
@@ -56,6 +62,7 @@ type NoteRecord = BaseRecord & {
 const noteRecordSchema = yup.object().shape({
   title: yup.string().required(),
   tagIds: yup.array().of(yup.string().required()).default([]),
+  content: yup.string(),
   folderId: yup.string().required(),
 });
 type NoteRecordSchema = yup.InferType<typeof noteRecordSchema>;
@@ -132,21 +139,94 @@ const noteRecordModel = {
       tsc.set(userDocRef, doc);
     });
   },
-  async remove(target: NoteRecord) {
+  async updateContent(target: NoteRecord, content: string) {
+    const firstChunkSize = 100;
+    const perChunkSize = 1000;
     const { db } = useNuxtApp().$fb;
     const userDocRef = createUserDocRef();
+    const chunkCount = Math.ceil(content.length / perChunkSize);
+    const firstChunk = content.slice(0, firstChunkSize);
+    const restChunks = Array.from({ length: chunkCount - 1 }).map((_, i) => {
+      const start = firstChunkSize + i * perChunkSize;
+      return content.slice(start, start + perChunkSize);
+    });
+    const chunks: {
+      docPath: string;
+      order: number;
+      content: string;
+    }[] = restChunks.map((str, i) => ({
+      docPath: `chunks/${randomString(12)}`,
+      order: i,
+      content: str,
+    }));
     await runTransaction(db, async (tsc) => {
-      const doc = (await tsc.get(userDocRef)).data() as UserDoc;
-      if (!doc) {
+      const userDoc = (await tsc.get(userDocRef)).data() as UserDoc;
+      if (!userDoc) {
         throw new Error("User document not found");
       }
-      const targetFolderIndex = doc.folder.findIndex((f) =>
+      const targetFolderIndex = userDoc.folder.findIndex((f) =>
         f.notes.some((n) => n.id === target.id)
       );
       if (targetFolderIndex === -1) {
         throw new Error("Note not found");
       }
-      const targetFolder = doc.folder[targetFolderIndex];
+      const targetFolder = userDoc.folder[targetFolderIndex];
+      const targetNoteIndex = targetFolder.notes.findIndex(
+        (n) => n.id === target.id
+      );
+      if (targetNoteIndex === -1) {
+        throw new Error("Note not found");
+      }
+      const targetNote = targetFolder.notes[targetNoteIndex];
+      targetNote.content.first = firstChunk;
+      // remove old chunks
+      if (targetNote.content.restChunk) {
+        targetNote.content.restChunk.forEach((c) => {
+          tsc.delete(doc(useNuxtApp().$fb.db, c.docPath));
+        });
+      }
+      // create new chunks
+      if (chunks.length > 0) {
+        let chunkDoc: NoteChunk = {
+          content: chunks[0].content,
+          uid: useAuth().profile?.uid || "",
+        };
+        chunks.forEach((c) => {
+          tsc.set(doc(useNuxtApp().$fb.db, c.docPath), chunkDoc);
+        });
+      }
+      // set doc
+      targetNote.content.restChunk = chunks.map((c) => ({
+        docPath: c.docPath,
+        order: c.order,
+      }));
+      // update note
+      targetNote.updatedAt = Timestamp.now();
+      targetNote.updatedBy = useAuth().createUserStamp();
+      userDoc.history.push(
+        noteHistoryModel.create(tsc, "note:updated", {
+          id: targetNote.id,
+          title: targetNote.title,
+        })
+      );
+      tsc.set(userDocRef, userDoc);
+    });
+  },
+  async remove(target: NoteRecord) {
+    const { db } = useNuxtApp().$fb;
+    const userDocRef = createUserDocRef();
+    await runTransaction(db, async (tsc) => {
+      const userDoc = (await tsc.get(userDocRef)).data() as UserDoc;
+      if (!userDoc) {
+        throw new Error("User document not found");
+      }
+      const targetFolderIndex = userDoc.folder.findIndex((f) =>
+        f.notes.some((n) => n.id === target.id)
+      );
+      if (targetFolderIndex === -1) {
+        throw new Error("Note not found");
+      }
+      const targetFolder = userDoc.folder[targetFolderIndex];
       const targetNoteIndex = targetFolder.notes.findIndex(
         (n) => n.id === target.id
       );
@@ -155,13 +235,19 @@ const noteRecordModel = {
       }
       const targetNote = targetFolder.notes[targetNoteIndex];
       targetFolder.notes.splice(targetNoteIndex, 1);
-      doc.history.push(
+      userDoc.history.push(
         noteHistoryModel.create(tsc, "note:deleted", {
           id: targetNote.id,
           title: targetNote.title,
         })
       );
-      tsc.set(userDocRef, doc);
+      // Remove content chunks
+      if (targetNote.content.restChunk) {
+        targetNote.content.restChunk.forEach((c) => {
+          tsc.delete(doc(useNuxtApp().$fb.db, c.docPath));
+        });
+      }
+      tsc.set(userDocRef, userDoc);
     });
   },
 };
