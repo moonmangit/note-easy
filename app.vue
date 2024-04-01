@@ -24,13 +24,19 @@
 </template>
 
 <script setup lang="ts">
+import { onAuthStateChanged } from "firebase/auth";
+
 const { loadingActive, loadingText, startLoading, stopLoading } =
   useAppLoading();
 
 onMounted(async () => {
-  startLoading();
-  await useAuth().fetchUser(useNuxtApp().$fb.db);
-  stopLoading();
+  onAuthStateChanged(useNuxtApp().$fb.auth, async (user) => {
+    if (user) {
+      startLoading();
+      await useAuth().fetchUser(useNuxtApp().$fb.db);
+      stopLoading();
+    }
+  });
 });
 </script>
 

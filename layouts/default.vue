@@ -14,6 +14,7 @@
         <h1>{{ useAuth().getProfileName }},</h1>
         <button
           class="text-xs border border-slate-500 p-1 px-2 flex items-center gap-1 h-fit"
+          @click="onLogout"
         >
           <Icon name="mdi:logout"></Icon>
           <span>Logout</span>
@@ -26,6 +27,23 @@
   </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { signOut } from "firebase/auth";
+
+async function onLogout() {
+  const { startLoading, stopLoading } = useAppLoading();
+  try {
+    startLoading();
+    await signOut(useNuxtApp().$fb.auth);
+    nextTick(() => {
+      navigateTo("/login");
+    });
+  } catch (error) {
+    console.error(error);
+  } finally {
+    stopLoading();
+  }
+}
+</script>
 
 <style></style>

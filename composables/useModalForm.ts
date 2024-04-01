@@ -1,7 +1,7 @@
 export default function <S extends {}, R extends {} = S>(conf: {
   title: string;
   schema: any;
-  initialValues: (record: R) => Partial<S>;
+  initialValues: (record?: R) => Partial<S>;
   handlers: {
     create: (values: S) => Promise<void>;
     update: (record: R, values: S) => Promise<void>;
@@ -17,7 +17,7 @@ export default function <S extends {}, R extends {} = S>(conf: {
     contextRecord.value = (record || null) as any;
     form.value = useForm<S>({
       validationSchema: conf.schema,
-      initialValues: record ? conf.initialValues(record) : ({} as S as any),
+      initialValues: conf.initialValues(record) as any,
     }) as any;
     afterRerender(formActive, () => {
       modalActive.value = true;
@@ -25,6 +25,7 @@ export default function <S extends {}, R extends {} = S>(conf: {
   }
   async function handleSubmit() {
     if (!form.value) return;
+    if (!(await form.value.validate()).valid) return;
     const { startLoading, stopLoading } = useAppLoading();
     startLoading();
     try {

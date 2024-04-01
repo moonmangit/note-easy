@@ -42,7 +42,7 @@ export const noteHistoryModel = {
 };
 
 // Note Record
-export type NoteRecord = BaseRecord & {
+type NoteRecord = BaseRecord & {
   title: string;
   content: {
     first: string;
@@ -53,6 +53,120 @@ export type NoteRecord = BaseRecord & {
   };
   tagIds: string[];
 };
+const noteRecordSchema = yup.object().shape({
+  title: yup.string().required(),
+  tagIds: yup.array().of(yup.string().required()).default([]),
+  folderId: yup.string().required(),
+});
+type NoteRecordSchema = yup.InferType<typeof noteRecordSchema>;
+const noteRecordModel = {
+  async create(values: NoteRecordSchema) {
+    const { db } = useNuxtApp().$fb;
+    const userDocRef = createUserDocRef();
+    await runTransaction(db, async (tsc) => {
+      const doc = (await tsc.get(userDocRef)).data() as UserDoc;
+      if (!doc) {
+        throw new Error("User document not found");
+      }
+      const targetFolderIndex = doc.folder.findIndex(
+        (f) => f.id === values.folderId
+      );
+      if (targetFolderIndex === -1) {
+        throw new Error("Folder not found");
+      }
+      const targetNote: NoteRecord = {
+        id: randomString(12),
+        title: values.title,
+        content: {
+          first: "",
+          restChunk: [],
+        },
+        tagIds: values.tagIds || [],
+        createdAt: Timestamp.now(),
+        createdBy: useAuth().createUserStamp(),
+        updatedAt: Timestamp.now(),
+        updatedBy: useAuth().createUserStamp(),
+      };
+      doc.folder[targetFolderIndex].notes.push(targetNote);
+      doc.history.push(
+        noteHistoryModel.create(tsc, "note:created", {
+          id: targetNote.id,
+          title: targetNote.title,
+        })
+      );
+      tsc.set(userDocRef, doc);
+    });
+  },
+  async update(target: NoteRecord, value: NoteRecordSchema) {
+    const { db } = useNuxtApp().$fb;
+    const userDocRef = createUserDocRef();
+    await runTransaction(db, async (tsc) => {
+      const doc = (await tsc.get(userDocRef)).data() as UserDoc;
+      if (!doc) {
+        throw new Error("User document not found");
+      }
+      const targetFolderIndex = doc.folder.findIndex((f) =>
+        f.notes.some((n) => n.id === target.id)
+      );
+      if (targetFolderIndex === -1) {
+        throw new Error("Note not found");
+      }
+      const targetFolder = doc.folder[targetFolderIndex];
+      const targetNoteIndex = targetFolder.notes.findIndex(
+        (n) => n.id === target.id
+      );
+      if (targetNoteIndex === -1) {
+        throw new Error("Note not found");
+      }
+      const targetNote = targetFolder.notes[targetNoteIndex];
+      targetNote.title = value.title;
+      targetNote.tagIds = value.tagIds;
+      targetNote.updatedAt = Timestamp.now();
+      targetNote.updatedBy = useAuth().createUserStamp();
+      doc.history.push(
+        noteHistoryModel.create(tsc, "note:updated", {
+          id: targetNote.id,
+          title: targetNote.title,
+        })
+      );
+      tsc.set(userDocRef, doc);
+    });
+  },
+  async remove(target: NoteRecord) {
+    const { db } = useNuxtApp().$fb;
+    const userDocRef = createUserDocRef();
+    await runTransaction(db, async (tsc) => {
+      const doc = (await tsc.get(userDocRef)).data() as UserDoc;
+      if (!doc) {
+        throw new Error("User document not found");
+      }
+      const targetFolderIndex = doc.folder.findIndex((f) =>
+        f.notes.some((n) => n.id === target.id)
+      );
+      if (targetFolderIndex === -1) {
+        throw new Error("Note not found");
+      }
+      const targetFolder = doc.folder[targetFolderIndex];
+      const targetNoteIndex = targetFolder.notes.findIndex(
+        (n) => n.id === target.id
+      );
+      if (targetNoteIndex === -1) {
+        throw new Error("Note not found");
+      }
+      const targetNote = targetFolder.notes[targetNoteIndex];
+      targetFolder.notes.splice(targetNoteIndex, 1);
+      doc.history.push(
+        noteHistoryModel.create(tsc, "note:deleted", {
+          id: targetNote.id,
+          title: targetNote.title,
+        })
+      );
+      tsc.set(userDocRef, doc);
+    });
+  },
+};
+export { noteRecordSchema, noteRecordModel };
+export type { NoteRecord, NoteRecordSchema };
 
 // Note Folder
 type NoteFolder = BaseRecord & {
@@ -159,6 +273,76 @@ export type { NoteFolderSchema, NoteFolder };
 export type NoteTag = BaseRecord & {
   id: string;
   title: string;
+};
+export const noteTagSchema = yup.object().shape({
+  title: yup.string().required(),
+});
+export type NoteTagSchema = yup.InferType<typeof noteTagSchema>;
+export const noteTagModel = {
+  async create(values: NoteTagSchema) {
+    const { db } = useNuxtApp().$fb;
+    const userDocRef = createUserDocRef();
+    await runTransaction(db, async (tsc) => {
+      const doc = (await tsc.get(userDocRef)).data() as UserDoc;
+      if (!doc) {
+        throw new Error("User document not found");
+      }
+      const targetTag: NoteTag = {
+        id: randomString(12),
+        title: values.title,
+        createdAt: Timestamp.now(),
+        createdBy: useAuth().createUserStamp(),
+        updatedAt: Timestamp.now(),
+        updatedBy: useAuth().createUserStamp(),
+      };
+      doc.tags.push(targetTag);
+      tsc.set(userDocRef, doc);
+    });
+  },
+  async update(target: NoteTag, value: NoteTagSchema) {
+    const { db } = useNuxtApp().$fb;
+    const userDocRef = createUserDocRef();
+    await runTransaction(db, async (tsc) => {
+      const doc = (await tsc.get(userDocRef)).data() as UserDoc;
+      if (!doc) {
+        throw new Error("User document not found");
+      }
+      const targetIndex = doc.tags.findIndex((t) => t.id === target.id);
+      if (targetIndex === -1) {
+        throw new Error("Tag not found");
+      }
+      const targetTag = doc.tags[targetIndex];
+      targetTag.title = value.title;
+      targetTag.updatedAt = Timestamp.now();
+      targetTag.updatedBy = useAuth().createUserStamp();
+      tsc.set(userDocRef, doc);
+    });
+  },
+  async remove(target: NoteTag) {
+    const { db } = useNuxtApp().$fb;
+    const userDocRef = createUserDocRef();
+    await runTransaction(db, async (tsc) => {
+      const doc = (await tsc.get(userDocRef)).data() as UserDoc;
+      if (!doc) {
+        throw new Error("User document not found");
+      }
+      const targetIndex = doc.tags.findIndex((t) => t.id === target.id);
+      if (targetIndex === -1) {
+        throw new Error("Tag not found");
+      }
+      doc.tags.splice(targetIndex, 1);
+      // remove tag from notes
+      doc.folder.forEach((f) => {
+        f.notes.forEach((n) => {
+          const tagIndex = n.tagIds.indexOf(target.id);
+          if (tagIndex !== -1) {
+            n.tagIds.splice(tagIndex, 1);
+          }
+        });
+      });
+      tsc.set(userDocRef, doc);
+    });
+  },
 };
 
 // User Document
