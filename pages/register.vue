@@ -1,47 +1,50 @@
 <template>
-  <div>
-    <form @submit.prevent="handleSubmit">
-      <AppFormBody title="Register !">
+  <div class="w-screen h-screen flex items-center justify-center bg-slate-400">
+    <form
+      @submit.prevent="handleSubmit"
+      class="w-[min(350px,90dvw)] bg-white p-4"
+    >
+      <AppFormBody
+        title="Register to Notez app"
+        description="please fill the form to register a new account."
+      >
         <template #default>
           <AppInputGroup
             label="Email"
-            :message="RegisterForm.errors.value.email"
+            :message="registerForm.errors.value.email"
           >
             <input
               class="app-input"
               type="email"
-              v-model="RegisterForm.defineField('email')[0].value"
+              v-model="registerForm.defineField('email')[0].value"
             />
           </AppInputGroup>
           <AppInputGroup
             label="Password"
-            :message="RegisterForm.errors.value.password"
+            :message="registerForm.errors.value.password"
           >
             <input
               class="app-input"
               type="password"
-              v-model="RegisterForm.defineField('password')[0].value"
+              v-model="registerForm.defineField('password')[0].value"
             />
           </AppInputGroup>
           <AppInputGroup
             label="Confirm Password"
-            :message="RegisterForm.errors.value.confirmPassword"
+            :message="registerForm.errors.value.confirmPassword"
           >
             <input
               class="app-input"
               type="password"
-              v-model="RegisterForm.defineField('confirmPassword')[0].value"
+              v-model="registerForm.defineField('confirmPassword')[0].value"
             />
           </AppInputGroup>
         </template>
         <template #footer>
           <div class="flex justify-between items-center">
-            <button
-              type="button"
-              class="underline"
-              @click.prevent="navigateTo('/login')"
-            >
-              < back to login
+            <button type="button" @click.prevent="navigateTo('/login')">
+              <Icon name="mdi:chevron-left"></Icon>
+              <span class="underline"> back to login </span>
             </button>
             <button type="submit" class="app-button">Register</button>
           </div>
@@ -52,6 +55,10 @@
 </template>
 
 <script lang="ts" setup>
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
 import { createRegisterForm } from "~/assets/models/register";
 
 definePageMeta({
@@ -59,13 +66,20 @@ definePageMeta({
 });
 
 // Register controller
-const RegisterForm = createRegisterForm();
-const handleSubmit = RegisterForm.handleSubmit(async (values, context) => {
+const registerForm = createRegisterForm();
+const handleSubmit = registerForm.handleSubmit(async (values, context) => {
+  const { startLoading, stopLoading } = useAppLoading();
   try {
+    startLoading();
     const { auth } = useNuxtApp().$fb;
-    console.log(auth, context);
+    await createUserWithEmailAndPassword(auth, values.email, values.password);
+    nextTick(() => {
+      navigateTo("/");
+    });
   } catch (error: any) {
-    console.error(error.message);
+    useToast().toastError(error.message);
+  } finally {
+    stopLoading();
   }
 });
 </script>

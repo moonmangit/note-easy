@@ -2,9 +2,9 @@
   <div class="flex flex-col md:flex-row gap-10">
     <AppContentSection class="flex-1">
       <template #header>
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-2 border-b-[1px] border-slate-200 pb-2">
           <section>
-            <button class="hover:underline" @click="navigateTo('/')">
+            <button class="hover:underline text-sm" @click="navigateTo('/')">
               <Icon name="mdi:chevron-left" />
               <span>Back to My folders</span>
             </button>
@@ -107,6 +107,7 @@
         <AppInputGroup label="Title" :message="errors.title">
           <input
             type="text"
+            class="app-input"
             placeholder="Title ..."
             v-model="defineField('title')[0].value"
           />
@@ -155,6 +156,7 @@ const tagCont = useModalForm<NoteTagSchema, NoteTag>({
     },
     async update(record, values) {
       await noteTagModel.update(record, values);
+      filterByTags.value = [];
     },
   },
 });

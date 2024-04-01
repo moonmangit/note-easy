@@ -1,13 +1,21 @@
 <template>
-  <div>
-    <form @submit.prevent="handleSubmit">
-      <AppFormBody title="Welcome !">
+  <div class="w-screen h-screen flex items-center justify-center bg-slate-400">
+    <form
+      @submit.prevent="handleSubmit"
+      class="w-[min(350px,90dvw)] bg-white p-4"
+    >
+      <AppFormBody
+        title="Welcome to Notez app"
+        description="please login with registered email and password."
+      >
         <template #default>
           <AppInputGroup label="Email" :message="loginForm.errors.value.email">
             <input
               class="app-input"
               type="email"
               v-model="loginForm.defineField('email')[0].value"
+              name="email"
+              autocomplete="email"
             />
           </AppInputGroup>
           <AppInputGroup
@@ -18,6 +26,7 @@
               class="app-input"
               type="password"
               v-model="loginForm.defineField('password')[0].value"
+              name="password"
             />
           </AppInputGroup>
         </template>
@@ -46,17 +55,25 @@ definePageMeta({
   layout: false,
 });
 
+function add() {
+  useToast().toastError("asd");
+}
+
 // Login controller
 const loginForm = createLoginForm();
 const handleSubmit = loginForm.handleSubmit(async (values, context) => {
+  const { startLoading, stopLoading } = useAppLoading();
   try {
+    startLoading();
     const { auth } = useNuxtApp().$fb;
     await signInWithEmailAndPassword(auth, values.email, values.password);
     nextTick(() => {
       navigateTo("/");
     });
   } catch (error: any) {
-    console.error(error.message);
+    useToast().toastError(error.message);
+  } finally {
+    stopLoading();
   }
 });
 </script>

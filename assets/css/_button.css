@@ -1,3 +1,10 @@
 .app-button {
-  @apply p-1 px-3 bg-slate-900 text-white;
+  @apply p-1 px-3 bg-slate-900 text-white duration-300;
+  @apply ring-0 ring-transparent hover:ring-4 hover:ring-slate-900/50;
+}
+
+.app-button--outline {
+  @apply p-1 px-3 duration-300;
+  @apply border border-slate-900 text-slate-900;
+  @apply hover:bg-slate-900 hover:text-white;
 }

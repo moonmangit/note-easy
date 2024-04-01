@@ -2,7 +2,9 @@
   <div class="flex flex-col md:flex-row gap-10">
     <AppContentSection class="flex-1">
       <template #header>
-        <div class="flex justify-between text-sm">
+        <div
+          class="flex justify-between text-sm border-b-[1px] border-slate-200 pb-2"
+        >
           <section>My Folders</section>
           <section class="flex gap-3">
             <button

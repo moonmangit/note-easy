@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ul for="note tags" class="flex flex-wrap gap-1">
+    <ul for="note tags" class="flex flex-wrap gap-2 items-center">
       <li
         v-for="tag in tags"
         :key="tag.id"
@@ -20,7 +20,7 @@
           <li v-for="(action, key) in actions" :key="key">
             <Icon
               :name="(action as any).iconName"
-              @click="(action as any).handler(tag)"
+              @click.stop="(action as any).handler(tag)"
             />
           </li>
         </ul>

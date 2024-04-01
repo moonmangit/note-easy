@@ -67,6 +67,7 @@
           <input
             type="text"
             placeholder="Title ..."
+            class="app-input"
             v-model="defineField('title')[0].value"
           />
         </AppInputGroup>
@@ -88,6 +89,10 @@
               }
             "
           ></PageIndexTagList>
+          <div class="text-sm text-slate-400 flex gap-2 items-center">
+            <Icon name="mdi:tag"></Icon>
+            <span>no tag available.</span>
+          </div>
         </AppInputGroup>
       </AppModalForm>
     </AppModal>

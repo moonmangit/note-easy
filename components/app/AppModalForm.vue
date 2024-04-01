@@ -6,15 +6,16 @@
     <AppFormBody
       :title="
         cont.action.value === 'create'
-          ? `Create ${cont.title}`
-          : `Update ${cont.title}`
+          ? `Create new ${cont.title}`
+          : `Update existing ${cont.title}`
       "
+      description="fill up the form below to continue."
     >
       <slot :="cont.form.value"></slot>
       <template #footer>
         <div class="flex justify-between">
           <button
-            class="app-button"
+            class="app-button--outline"
             type="button"
             @click.prevent="cont.form.value.resetForm()"
           >

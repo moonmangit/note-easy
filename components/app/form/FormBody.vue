@@ -1,8 +1,8 @@
 <template>
-  <div class="flex flex-col gap-2">
+  <div class="flex flex-col gap-4">
     <header>
-      <h1>{{ title }}</h1>
-      <p v-if="description">{{ description }}</p>
+      <h1 class="font-medium text-lg">{{ title }}</h1>
+      <p v-if="description" class="text-sm text-slate-400">{{ description }}</p>
     </header>
     <main class="flex flex-col gap-2">
       <slot></slot>

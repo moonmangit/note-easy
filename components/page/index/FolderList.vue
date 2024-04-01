@@ -65,6 +65,7 @@
         <AppInputGroup label="Title" :message="errors.title">
           <input
             type="text"
+            class="app-input"
             placeholder="Title ..."
             v-model="defineField('title')[0].value"
           />

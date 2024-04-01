@@ -37,8 +37,9 @@ export default function <S extends {}, R extends {} = S>(conf: {
         }
         modalActive.value = false;
       })();
-    } catch (error) {
-      console.error(error);
+      useToast().toastSuccess(`Success ${action} ${conf.title}`);
+    } catch (error: any) {
+      useToast().toastError(error.message || error);
     } finally {
       stopLoading();
     }

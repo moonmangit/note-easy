@@ -1,6 +1,6 @@
 <template>
   <div
-    class="grid grid-cols-[max-content_1fr] text-sm gap-x-3 gap-y-2 bg-slate-100 p-3"
+    class="grid grid-cols-[max-content_1fr] text-xs gap-x-3 gap-y-2 bg-slate-100 p-3"
   >
     <template v-for="(val, key) in meta" :key="key">
       <div class="capitalize font-medium">{{ key }}</div>

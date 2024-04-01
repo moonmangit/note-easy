@@ -4,6 +4,7 @@
       <NuxtPage />
     </NuxtLayout>
 
+    <!-- Loading -->
     <Transition name="loading">
       <section
         v-if="loadingActive"
@@ -20,6 +21,8 @@
         </div>
       </section>
     </Transition>
+    <!-- Toast -->
+    <AppToastList :toasts="toasts" />
   </div>
 </template>
 
@@ -38,6 +41,8 @@ onMounted(async () => {
     }
   });
 });
+
+const { arr: toasts } = storeToRefs(useToast());
 </script>
 
 <style scoped>

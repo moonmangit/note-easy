@@ -2,7 +2,7 @@
   <div class="flex flex-col md:flex-row gap-10">
     <AppContentSection v-if="shouldRender" class="flex-1">
       <template #header>
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-2 border-b-[1px] border-slate-200 pb-2">
           <section>
             <button
               class="hover:underline"

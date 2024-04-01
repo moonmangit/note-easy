@@ -14,9 +14,11 @@ export default defineStore("auth", () => {
   const getUserImageUrl = computed(() => {
     return (
       profile.value?.photoURL ||
-      `https://placehold.co/128x128?text=${
-        profile.value?.displayName?.[0] || profile.value?.email?.[0] || "U"
-      }`
+      `https://placehold.co/128x128?text=${(
+        profile.value?.displayName?.[0] ||
+        profile.value?.email?.[0] ||
+        "U"
+      ).toUpperCase()}`
     );
   });
   const getProfileName = computed(() => {
