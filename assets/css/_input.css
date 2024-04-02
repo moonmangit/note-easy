@@ -1,4 +1,5 @@
 .app-input {
-  @apply bg-slate-100 p-2 px-3;
+  @apply bg-slate-100 p-2 px-3 font-medium;
   @apply outline-none focus:ring-1 focus:ring-slate-400;
+  @apply placeholder:font-light read-only:!ring-transparent;
 }

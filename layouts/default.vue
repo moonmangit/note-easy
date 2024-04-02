@@ -6,15 +6,25 @@
       </h1>
       <section class="flex gap-1 items-center divide-x-2">
         <div
-          class="w-10 rounded-full overflow-hidden relative border border-slate-500 mx-1"
+          class="w-10 h-10 rounded-full overflow-hidden relative border border-slate-500 mx-1"
         >
-          <img :src="useAuth().getUserImageUrl" alt="" />
+          <img
+            class="w-full h-full object-cover"
+            :src="useAuth().getUserImageUrl"
+            alt=""
+          />
           <div class="bg-slate-800 absolute inset-[-2px] mix-blend-color" />
         </div>
         <section class="text-sm px-2">
-          <h1>{{ useAuth().getProfileName }}</h1>
-          <div class="flex justify-between">
-            <button type="button" class="text-xs underline" @click="onLogout">
+          <h1 class="text-slate-700 font-medium text-end">
+            {{ useAuth().getProfileName }}
+          </h1>
+          <div class="flex justify-between gap-4">
+            <button
+              type="button"
+              class="text-xs underline"
+              @click="navigateTo('/profile')"
+            >
               Profile
             </button>
             <button type="button" class="text-xs underline" @click="onLogout">
@@ -37,7 +47,6 @@ async function onLogout() {
   const { startLoading, stopLoading } = useAppLoading();
   try {
     startLoading();
-    await new Promise((resolve) => setTimeout(resolve, 5000));
     await signOut(useNuxtApp().$fb.auth);
     // clear
     useAuth().$patch({

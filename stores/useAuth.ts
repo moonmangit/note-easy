@@ -28,7 +28,7 @@ export default defineStore("auth", () => {
   async function fetchUser(db: Firestore) {
     if (!profile.value) return;
     const userDocRef = createUserDocRef();
-    return onSnapshot(userDocRef, async (doc) => {
+    unsubscribeUserDoc.value = onSnapshot(userDocRef, async (doc) => {
       if (!doc.exists()) {
         await setDoc(userDocRef, {
           folder: [],

@@ -102,12 +102,6 @@ async function onSubmitContent() {
       note.value,
       form.value.values.content || ""
     );
-    // await noteRecordModel.update(note.value, {
-    //   title: note.value?.title,
-    //   folderId: folder.value?.id || "",
-    //   tagIds: form.value.values.tagIds,
-    //   content: form.value.values.content,
-    // });
   } catch (error) {
     console.log(error);
   } finally {
@@ -115,6 +109,7 @@ async function onSubmitContent() {
   }
 }
 onMounted(async () => {
+  useAppLoading().startLoading();
   // aggregate content
   const userDocRef = createUserDocRef();
   const _content = await runTransaction<string>(db, async (tsc) => {
@@ -148,6 +143,7 @@ onMounted(async () => {
     },
   }) as any;
   contentPending.value = false;
+  useAppLoading().stopLoading();
 });
 </script>
 

@@ -5,7 +5,7 @@
         <div
           class="flex justify-between text-sm border-b-[1px] border-slate-200 pb-2"
         >
-          <section>My Folders</section>
+          <section class="text-slate-700 font-medium">My Folders</section>
           <section class="flex gap-3">
             <button
               v-for="(conf, key) in sortConf"

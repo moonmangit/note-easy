@@ -23,6 +23,7 @@
         </span>
       </section>
     </li>
+    <li key="empty" v-if="histories.length === 0">no history.</li>
   </TransitionGroup>
 </template>
 

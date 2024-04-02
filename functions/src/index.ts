@@ -1,19 +1,29 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * import {onCall} from "firebase-functions/v2/https";
- * import {onDocumentWritten} from "firebase-functions/v2/firestore";
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
+import { createProfileRouter } from "./routers/profile";
+import { getAuth } from "firebase-admin/auth";
+import { getStorage } from "firebase-admin/storage";
+import { initializeApp } from "firebase-admin/app";
+import { onRequest } from "firebase-functions/v2/https";
+import * as express from "express";
+// import * as logger from "firebase-functions/logger";
+import authCheck from "./middlewares/authCheck";
+import { getFirestore } from "firebase-admin/firestore";
 
-import {onRequest} from "firebase-functions/v2/https";
-import * as logger from "firebase-functions/logger";
+const firebaseApp = initializeApp();
+const auth = getAuth(firebaseApp);
+const storage = getStorage(firebaseApp);
+const db = getFirestore(firebaseApp);
+const profileRouter = createProfileRouter(auth, storage, db);
 
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+app.use("/profile", (...args) => authCheck(...args, { auth }), profileRouter);
+
+export const v1 = onRequest(
+  {
+    region: "asia-east2",
+    cors: true,
+  },
+  app
+);

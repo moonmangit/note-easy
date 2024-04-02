@@ -48,10 +48,11 @@
               <span
                 class="absolute bg-slate-500 text-white w-[15px] aspect-square rounded-full flex items-center justify-center -top-1 -right-1 text-xs"
                 :class="{
-                  'bg-blue-500': folder.notes.length > 0,
+                  '!bg-blue-500': folder.notes.length > 0,
                 }"
-                >{{ folder.notes.length }}</span
               >
+                {{ folder.notes.length }}
+              </span>
             </div>
           </main>
           <footer>
