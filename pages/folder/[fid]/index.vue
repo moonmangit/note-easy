@@ -175,10 +175,15 @@ const notes = computed(() => {
     }) || []
   );
 });
-const { preparedNotes, currentPage, sortBy, sortConf, totalPage } =
-  usePrepareItem(notes, 13, (a, b) => {
-    return b.updatedAt.toDate().getTime() - a.updatedAt.toDate().getTime();
-  });
+const {
+  preparedItems: preparedNotes,
+  currentPage,
+  sortBy,
+  sortConf,
+  totalPage,
+} = usePrepareItem(notes, (a, b) => {
+  return b.updatedAt.toDate().getTime() - a.updatedAt.toDate().getTime();
+});
 
 // Prepare hist
 const hist = computed(() => {

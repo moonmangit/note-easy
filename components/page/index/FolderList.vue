@@ -55,7 +55,7 @@
             </div>
           </main>
           <footer>
-            <p class="text-slate-400">
+            <p class="text-slate-400 text-end">
               {{ $dayjs(folder.updatedAt.toDate()).fromNow() }}
             </p>
           </footer>

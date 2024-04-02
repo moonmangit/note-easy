@@ -57,40 +57,17 @@
 </template>
 
 <script lang="ts" setup>
-// paginate
-const perPage = 13;
-const currentPage = ref(1);
-const totalPage = computed(() => {
-  return Math.ceil((useAuth().userDoc?.folder.length || 0) / perPage);
+const folder = computed(() => {
+  return useAuth().userDoc?.folder || [];
 });
-// sort
-type SortBy = "oldest" | "latest";
-const sortBy = ref<SortBy>("latest");
-const sortConf: Record<
-  SortBy,
-  {
-    label: string;
-    iconName: string;
-  }
-> = {
-  oldest: { label: "Oldest", iconName: "mdi:arrow-down" },
-  latest: { label: "Latest", iconName: "mdi:arrow-up" },
-};
-const preparedFolders = computed(() => {
-  let sorted =
-    sortBy.value === "latest"
-      ? useAuth().userDoc?.folder.toSorted(
-          (a, b) =>
-            b.updatedAt.toDate().getTime() - a.updatedAt.toDate().getTime()
-        )
-      : useAuth().userDoc?.folder.toSorted(
-          (a, b) =>
-            a.updatedAt.toDate().getTime() - b.updatedAt.toDate().getTime()
-        );
-  return sorted?.slice(
-    (currentPage.value - 1) * perPage,
-    currentPage.value * perPage
-  );
+const {
+  preparedItems: preparedFolders,
+  currentPage,
+  sortBy,
+  sortConf,
+  totalPage,
+} = usePrepareItem(folder, (a, b) => {
+  return b.updatedAt.toDate().getTime() - a.updatedAt.toDate().getTime();
 });
 </script>
 

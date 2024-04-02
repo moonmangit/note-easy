@@ -44,12 +44,15 @@
               :active-ids="activeTagIds"
             />
           </header>
-          <main
-            class="whitespace-normal line-clamp-4 flex-1"
-            v-html="note.content.first"
-          ></main>
+          <div class="flex-1 relative">
+            <main
+              class="whitespace-normal line-clamp-4"
+              v-html="note.content.first"
+            />
+            <div class="absolute bg-gradient-to-t from-slate-100 inset-0"></div>
+          </div>
           <footer>
-            <p class="text-slate-400">
+            <p class="text-slate-400 text-end">
               {{ $dayjs(note.updatedAt.toDate()).fromNow() }}
             </p>
           </footer>

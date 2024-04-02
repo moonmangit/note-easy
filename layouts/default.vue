@@ -13,9 +13,14 @@
         </div>
         <section class="text-sm px-2">
           <h1>{{ useAuth().getProfileName }}</h1>
-          <button type="button" class="text-xs underline" @click="onLogout">
-            logout
-          </button>
+          <div class="flex justify-between">
+            <button type="button" class="text-xs underline" @click="onLogout">
+              Profile
+            </button>
+            <button type="button" class="text-xs underline" @click="onLogout">
+              Logout
+            </button>
+          </div>
         </section>
       </section>
     </header>

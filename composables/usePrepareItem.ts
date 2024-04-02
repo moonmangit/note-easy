@@ -1,7 +1,7 @@
 export default function <T>(
   items: ComputedRef<T[]>,
-  perPage: number = 13,
-  compareFn: (a: T, b: T) => number
+  compareFn: (a: T, b: T) => number,
+  perPage: number = 6
 ) {
   // paginate
   const currentPage = ref(1);
@@ -21,7 +21,7 @@ export default function <T>(
     oldest: { label: "Oldest", iconName: "mdi:arrow-down" },
     latest: { label: "Latest", iconName: "mdi:arrow-up" },
   };
-  const preparedNotes = computed(() => {
+  const preparedItems = computed(() => {
     let sorted =
       sortBy.value === "latest"
         ? items.value.toSorted((a, b) => compareFn(a, b))
@@ -31,11 +31,14 @@ export default function <T>(
       currentPage.value * perPage
     );
   });
+  watch(items, () => {
+    currentPage.value = 1;
+  });
   return {
     currentPage,
     totalPage,
     sortBy,
     sortConf,
-    preparedNotes,
+    preparedItems,
   };
 }
