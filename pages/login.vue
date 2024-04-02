@@ -1,5 +1,5 @@
 <template>
-  <div class="w-screen h-screen flex items-center justify-center bg-slate-400">
+  <div class="w-screen h-screen flex items-center justify-center">
     <form
       @submit.prevent="handleSubmit"
       class="w-[min(350px,90dvw)] bg-white p-4"
@@ -16,6 +16,7 @@
               v-model="loginForm.defineField('email')[0].value"
               name="email"
               autocomplete="email"
+              placeholder="example@mail.com"
             />
           </AppInputGroup>
           <AppInputGroup
@@ -27,6 +28,7 @@
               type="password"
               v-model="loginForm.defineField('password')[0].value"
               name="password"
+              placeholder="●●●●●●●●"
             />
           </AppInputGroup>
         </template>
@@ -52,12 +54,8 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { createLoginForm } from "~/assets/models/login";
 
 definePageMeta({
-  layout: false,
+  layout: "single-form",
 });
-
-function add() {
-  useToast().toastError("asd");
-}
 
 // Login controller
 const loginForm = createLoginForm();

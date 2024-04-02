@@ -17,6 +17,7 @@
               class="app-input"
               type="email"
               v-model="registerForm.defineField('email')[0].value"
+              placeholder="example@mail.com"
             />
           </AppInputGroup>
           <AppInputGroup
@@ -27,6 +28,7 @@
               class="app-input"
               type="password"
               v-model="registerForm.defineField('password')[0].value"
+              placeholder="●●●●●●●●"
             />
           </AppInputGroup>
           <AppInputGroup
@@ -37,6 +39,7 @@
               class="app-input"
               type="password"
               v-model="registerForm.defineField('confirmPassword')[0].value"
+              placeholder="●●●●●●●●"
             />
           </AppInputGroup>
         </template>
@@ -55,14 +58,11 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-} from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { createRegisterForm } from "~/assets/models/register";
 
 definePageMeta({
-  layout: false,
+  layout: "single-form",
 });
 
 // Register controller

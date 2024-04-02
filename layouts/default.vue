@@ -32,7 +32,12 @@ async function onLogout() {
   const { startLoading, stopLoading } = useAppLoading();
   try {
     startLoading();
+    await new Promise((resolve) => setTimeout(resolve, 5000));
     await signOut(useNuxtApp().$fb.auth);
+    // clear
+    useAuth().$patch({
+      userDoc: null,
+    });
     nextTick(() => {
       navigateTo("/login");
     });

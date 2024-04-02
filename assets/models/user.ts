@@ -125,6 +125,8 @@ const noteRecordModel = {
       if (targetNoteIndex === -1) {
         throw new Error("Note not found");
       }
+      targetFolder.updatedAt = Timestamp.now();
+      targetFolder.updatedBy = useAuth().createUserStamp();
       const targetNote = targetFolder.notes[targetNoteIndex];
       targetNote.title = value.title;
       targetNote.tagIds = value.tagIds;
@@ -171,6 +173,8 @@ const noteRecordModel = {
         throw new Error("Note not found");
       }
       const targetFolder = userDoc.folder[targetFolderIndex];
+      targetFolder.updatedAt = Timestamp.now();
+      targetFolder.updatedBy = useAuth().createUserStamp();
       const targetNoteIndex = targetFolder.notes.findIndex(
         (n) => n.id === target.id
       );
@@ -227,6 +231,8 @@ const noteRecordModel = {
         throw new Error("Note not found");
       }
       const targetFolder = userDoc.folder[targetFolderIndex];
+      targetFolder.updatedAt = Timestamp.now();
+      targetFolder.updatedBy = useAuth().createUserStamp();
       const targetNoteIndex = targetFolder.notes.findIndex(
         (n) => n.id === target.id
       );

@@ -9,7 +9,8 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "firebase:start": "firebase emulators:start --import ./exports",
-    "firebase:export": "firebase emulators:export ./exports --force"
+    "firebase:export": "firebase emulators:export ./exports --force",
+    "forebase:deploy:preview": "nuxt build && nuxt generate && firebase hosting:channel:deploy preview"
   },
   "dependencies": {
     "@nuxtjs/google-fonts": "^3.2.0",
@@ -18,6 +19,7 @@
     "@vee-validate/yup": "^4.12.6",
     "@vueup/vue-quill": "^1.2.0",
     "@vueuse/nuxt": "^10.9.0",
+    "animate.css": "^4.1.1",
     "dayjs-nuxt": "^2.1.9",
     "firebase": "^10.10.0",
     "nuxt": "^3.11.1",

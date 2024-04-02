@@ -8,7 +8,7 @@
     >
       <li
         for="add"
-        class="flex items-center justify-center gap-1"
+        class="flex items-center justify-center gap-1 !border-slate-400 border-dashed"
         key="add"
         @click="cont.open('create')"
       >
@@ -47,6 +47,9 @@
               <Icon name="mdi:note-multiple" class="text-3xl text-slate-400" />
               <span
                 class="absolute bg-slate-500 text-white w-[15px] aspect-square rounded-full flex items-center justify-center -top-1 -right-1 text-xs"
+                :class="{
+                  'bg-blue-500': folder.notes.length > 0,
+                }"
                 >{{ folder.notes.length }}</span
               >
             </div>
@@ -114,7 +117,7 @@ async function removeFolder(target: NoteFolder) {
 <style scoped>
 ul[for="folder list"] {
   > li {
-    @apply h-[200px] bg-slate-200 border border-transparent;
+    @apply h-[200px] bg-slate-100 border border-transparent;
     @apply hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-300 duration-300;
     @apply hover:border-slate-400 cursor-pointer;
   }

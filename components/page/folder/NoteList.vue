@@ -9,7 +9,7 @@
       <li
         for="add"
         key="add"
-        class="flex items-center justify-center gap-1"
+        class="flex items-center justify-center gap-1 !border-slate-400 border-dashed"
         @click="noteCont.open('create')"
       >
         <Icon name="mdi:book-plus" />
@@ -89,7 +89,10 @@
               }
             "
           ></PageIndexTagList>
-          <div class="text-sm text-slate-400 flex gap-2 items-center">
+          <div
+            v-if="!useAuth().userDoc?.tags.length"
+            class="text-sm text-slate-400 flex gap-2 items-center"
+          >
             <Icon name="mdi:tag"></Icon>
             <span>no tag available.</span>
           </div>
@@ -147,7 +150,7 @@ async function removeNote(target: NoteRecord) {
 <style scoped>
 ul[for="note list"] {
   > li {
-    @apply h-[200px] bg-slate-200 border border-transparent;
+    @apply h-[200px] bg-slate-100 border border-transparent;
     @apply hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-300 duration-300;
     @apply hover:border-slate-400 cursor-pointer;
   }
