@@ -10,7 +10,8 @@
     "postinstall": "nuxt prepare",
     "firebase:start": "firebase emulators:start --import ./exports",
     "firebase:export": "firebase emulators:export ./exports --force",
-    "firebase:deploy:preview": "nuxt build && nuxt generate && firebase hosting:channel:deploy preview"
+    "firebase:deploy:preview": "nuxt build && nuxt generate && firebase hosting:channel:deploy preview",
+    "firebase:deploy": "nuxt build && nuxt generate && firebase deploy --only hosting"
   },
   "dependencies": {
     "@nuxtjs/google-fonts": "^3.2.0",

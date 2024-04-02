@@ -46,8 +46,6 @@ async function onLogout() {
   const { startLoading, stopLoading } = useAppLoading();
   try {
     startLoading();
-    await signOut(useNuxtApp().$fb.auth);
-    // clear
     useAuth().logout();
   } catch (error) {
     console.error(error);
