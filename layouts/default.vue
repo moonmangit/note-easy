@@ -1,19 +1,18 @@
 <template>
-  <div class="container mx-auto max-w-8xl px-4">
-    <header class="flex justify-between items-center pb-4">
+  <div class="container mx-auto max-w-8xl">
+    <header
+      class="flex justify-between items-center sticky lg:static top-0 bg-white z-10 px-4"
+    >
       <h1 class="text-xl font-bold py-4 text-slate-700">
         Notez <Icon name="mdi:pencil-circle-outline"></Icon>
       </h1>
       <section class="flex gap-1 items-center divide-x-2">
-        <div
-          class="w-10 h-10 rounded-full overflow-hidden relative border border-slate-500 mx-1"
-        >
+        <div class="w-10 h-10 rounded-full overflow-hidden relative mx-1">
           <img
             class="w-full h-full object-cover"
             :src="useAuth().getUserImageUrl"
             alt=""
           />
-          <div class="bg-slate-800 absolute inset-[-2px] mix-blend-color" />
         </div>
         <section class="text-sm px-2">
           <h1 class="text-slate-700 font-medium text-end">
@@ -34,7 +33,7 @@
         </section>
       </section>
     </header>
-    <main class="pb-8">
+    <main class="pb-8 mt-4 px-4">
       <slot />
     </main>
   </div>
@@ -49,12 +48,7 @@ async function onLogout() {
     startLoading();
     await signOut(useNuxtApp().$fb.auth);
     // clear
-    useAuth().$patch({
-      userDoc: null,
-    });
-    nextTick(() => {
-      navigateTo("/login");
-    });
+    useAuth().logout();
   } catch (error) {
     console.error(error);
   } finally {

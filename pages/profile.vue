@@ -83,7 +83,7 @@
                 <input
                   type="password"
                   class="app-input"
-                  placeholder="********"
+                  placeholder="●●●●●●●●"
                   v-model="form.defineField('newPassword')[0].value"
                   :disabled="!form.defineField('isChangePassword')[0].value"
                 />
@@ -95,7 +95,7 @@
                 <input
                   type="password"
                   class="app-input"
-                  placeholder="********"
+                  placeholder="●●●●●●●●"
                   v-model="form.defineField('confirmNewPassword')[0].value"
                   :disabled="!form.defineField('isChangePassword')[0].value"
                 />
@@ -166,7 +166,7 @@ const form = useForm<yup.InferType<typeof profileSchema>>({
   initialValues: {
     uid: useAuth().profile?.uid || "",
     email: useAuth().profile?.email || "",
-    displayName: useAuth().profile?.displayName || "",
+    displayName: useAuth().profile?.displayName || undefined,
     photoURL: useAuth().profile?.photoURL || "",
     isChangePassword: false,
     newPassword: "",
@@ -227,22 +227,16 @@ function blobToBase64(blob: Blob): Promise<string> {
 // Delete Controller
 async function handleDelete() {
   if (!confirm("Are you sure you want to delete your account?")) return;
-
   const { startLoading, stopLoading } = useAppLoading();
   try {
     startLoading();
-    useAuth().unsubscribeUserDoc?.();
     await $fetch(getRequestEndpoint("/profile/:uid"), {
       method: "DELETE",
       headers: await getRequestHeaders(),
     });
     useToast().toastSuccess("Account deleted successfully");
-    await signOut(useNuxtApp().$fb.auth);
-    nextTick(() => {
-      navigateTo("/login");
-    });
+    await useAuth().logout();
   } catch (error) {
-    await useAuth().fetchUser(useNuxtApp().$fb.db);
     useToast().toastError(`Failed to delete account, ${error}`);
   } finally {
     stopLoading();

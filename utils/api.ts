@@ -14,7 +14,7 @@ function replaceUserId(endpoint: Endpoints) {
 }
 export default function getRequestEndpoint(endpoint: Endpoints) {
   if (process.env.NODE_ENV === "development") {
-    return `http://127.0.0.1:5001/notez-e2410/us-central1/v1${replaceUserId(
+    return `http://127.0.0.1:5001/notez-e2410/asia-east2/v1${replaceUserId(
       endpoint
     )}`;
   } else {

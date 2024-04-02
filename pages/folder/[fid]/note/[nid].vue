@@ -102,8 +102,9 @@ async function onSubmitContent() {
       note.value,
       form.value.values.content || ""
     );
-  } catch (error) {
-    console.log(error);
+    useToast().toastSuccess("Note has been saved successfully!");
+  } catch (error: any) {
+    useToast().toastError(`Failed to save note!, ${error.message}`);
   } finally {
     stopLoading();
   }

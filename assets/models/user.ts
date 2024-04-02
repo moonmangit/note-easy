@@ -334,17 +334,25 @@ const noteFolderModel = {
     const { db } = useNuxtApp().$fb;
     const userDocRef = createUserDocRef();
     await runTransaction(db, async (tsc) => {
-      const doc = (await tsc.get(userDocRef)).data() as UserDoc;
-      if (!doc) {
+      const userDoc = (await tsc.get(userDocRef)).data() as UserDoc;
+      if (!userDoc) {
         throw new Error("User document not found");
       }
-      const targetIndex = doc.folder.findIndex((f) => f.id === target.id);
+      const targetIndex = userDoc.folder.findIndex((f) => f.id === target.id);
       if (targetIndex === -1) {
         throw new Error("Folder not found");
       }
-      const targetFolder = doc.folder[targetIndex];
-      doc.folder.splice(targetIndex, 1);
-      doc.history.push({
+      const targetFolder = userDoc.folder[targetIndex];
+      const targetNotes = targetFolder.notes;
+      const targetNoteChunks = targetNotes.flatMap(
+        (note) => note.content.restChunk
+      );
+      // remove chunks
+      targetNoteChunks.forEach((c) => {
+        tsc.delete(doc(useNuxtApp().$fb.db, c.docPath));
+      });
+      userDoc.folder.splice(targetIndex, 1);
+      userDoc.history.push({
         id: randomString(12),
         action: "folder:deleted",
         at: Timestamp.now(),
@@ -354,7 +362,7 @@ const noteFolderModel = {
           title: targetFolder.title,
         },
       });
-      tsc.set(userDocRef, doc);
+      tsc.set(userDocRef, userDoc);
     });
   },
 };

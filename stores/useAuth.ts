@@ -1,4 +1,4 @@
-import type { User } from "firebase/auth";
+import { signOut, type User } from "firebase/auth";
 import { Firestore, doc, onSnapshot, setDoc } from "firebase/firestore";
 import type { UserStamp } from "~/assets/libs/model";
 import { createUserDocRef, type UserDoc } from "~/assets/models/user";
@@ -49,6 +49,14 @@ export default defineStore("auth", () => {
       name: profile.value?.displayName || profile.value?.email || "Unknown",
     };
   }
+  async function logout() {
+    await signOut(useNuxtApp().$fb.auth);
+    unsubscribeUserDoc.value?.();
+    nextTick(() => {
+      navigateTo("/login");
+    });
+    $reset();
+  }
   return {
     profile,
     userDoc,
@@ -59,5 +67,6 @@ export default defineStore("auth", () => {
     getProfileName,
     fetchUser,
     createUserStamp,
+    logout,
   };
 });

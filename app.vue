@@ -79,4 +79,13 @@ const { arr: toasts } = storeToRefs(useToast());
 .page-leave-to {
   @apply opacity-0 -translate-y-1;
 }
+
+.layout-enter-active,
+.layout-leave-active {
+  @apply duration-300;
+}
+.layout-enter-from,
+.layout-leave-to {
+  @apply opacity-0 -translate-y-1;
+}
 </style>

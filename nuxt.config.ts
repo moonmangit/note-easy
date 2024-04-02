@@ -4,6 +4,7 @@ export default defineNuxtConfig({
   ssr: false,
   app: {
     pageTransition: { name: "page", mode: "out-in" },
+    layoutTransition: { name: "layout", mode: "out-in" },
   },
   runtimeConfig: {
     public: {

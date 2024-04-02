@@ -39,7 +39,7 @@
               class="underline"
               @click.prevent="navigateTo('/register')"
             >
-              don't have an account ?
+              Don't have an account ?
             </button>
             <button type="submit" class="app-button">Login</button>
           </div>

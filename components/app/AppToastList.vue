@@ -8,14 +8,14 @@
       <li
         v-for="toast in toasts"
         :key="toast.id"
-        class="flex gap-2 items-center bg-white p-3 whitespace-nowrap shadow-lg border border-slate-200"
+        class="flex gap-2 items-start bg-slate-500 text-slate-100 p-3 whitespace-nowrap shadow-lg shadow-slate-500/30"
       >
         <section :class="[typeConf[toast.type].textColorClass]">
           <Icon :name="typeConf[toast.type].iconName"></Icon>
         </section>
         <section class="flex flex-col gap-1 text-sm">
           <h1>{{ toast.title }}</h1>
-          <p class="text-xs">{{ toast.message }}</p>
+          <p class="text-xs text-slate-300">{{ toast.message }}</p>
         </section>
       </li>
     </TransitionGroup>
@@ -39,12 +39,12 @@ const typeConf: Record<
   }
 > = {
   success: {
-    textColorClass: "text-emerald-500",
+    textColorClass: "text-emerald-400",
     bgColorClass: "bg-emerald-100",
     iconName: "mdi:check-circle",
   },
   error: {
-    textColorClass: "text-red-500",
+    textColorClass: "text-red-300",
     bgColorClass: "bg-red-100",
     iconName: "mdi:alert-circle",
   },

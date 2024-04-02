@@ -17,7 +17,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
   if (process.env.NODE_ENV === "development") {
     connectAuthEmulator(auth, "http://localhost:9099", {
-      disableWarnings: true,
+      disableWarnings: false,
     });
     connectFirestoreEmulator(db, "localhost", 8080);
     connectStorageEmulator(storage, "localhost", 9199);

@@ -1,6 +1,11 @@
 <template>
   <div>
-    <ul for="note tags" class="flex flex-wrap gap-2 items-center">
+    <TransitionGroup
+      name="list"
+      tag="ul"
+      for="note tags"
+      class="flex flex-wrap gap-2 items-center"
+    >
       <li
         v-for="tag in tags"
         :key="tag.id"
@@ -29,10 +34,11 @@
         v-if="withAdd"
         class="hover:bg-slate-200 border-dashed"
         @click="$emit('add')"
+        key="add"
       >
         + tag
       </li>
-    </ul>
+    </TransitionGroup>
   </div>
 </template>
 
@@ -63,5 +69,21 @@ ul[for="note tags"] {
   > li {
     @apply text-xs border border-slate-500 p-1 px-2 cursor-pointer;
   }
+}
+
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.list-leave-active {
+  position: absolute;
 }
 </style>
