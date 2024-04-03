@@ -38,6 +38,14 @@
       >
         + tag
       </li>
+      <li
+        v-if="tags.length === 0 && !withAdd"
+        key="empty"
+        class="empty text-xs text-slate-400"
+        title="back to folder to edit note's tags"
+      >
+        No tags
+      </li>
     </TransitionGroup>
   </div>
 </template>
@@ -66,7 +74,7 @@ const emits = defineEmits<{
 
 <style scoped>
 ul[for="note tags"] {
-  > li {
+  > li:not(.empty) {
     @apply text-xs border border-slate-500 p-1 px-2 cursor-pointer;
   }
 }

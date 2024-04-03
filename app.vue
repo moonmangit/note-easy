@@ -9,7 +9,7 @@
       <section
         v-if="loadingActive"
         for="loading"
-        class="fixed inset-0 bg-slate-900/60 flex items-center justify-center z-30"
+        class="fixed inset-0 bg-slate-900/60 flex items-center justify-center z-50"
       >
         <div>
           <h1 class="text-4xl font-bold py-4 text-white animate-spin-y">

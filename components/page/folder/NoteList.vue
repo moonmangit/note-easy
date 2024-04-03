@@ -146,7 +146,15 @@ const noteCont = useModalForm<NoteRecordSchema, NoteRecord>({
 });
 async function removeNote(target: NoteRecord) {
   if (!confirm("Are you sure to delete this note?")) return;
-  await noteRecordModel.remove(target);
+  try {
+    useAppLoading().startLoading();
+    await noteRecordModel.remove(target);
+    useToast().toastSuccess("Note has been removed.");
+  } catch (error: any) {
+    useToast().toastError(`Failed to remove note, ${error.message}`);
+  } finally {
+    useAppLoading().stopLoading();
+  }
 }
 </script>
 

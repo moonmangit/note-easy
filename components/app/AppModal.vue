@@ -2,7 +2,7 @@
   <Transition>
     <div
       v-if="modelValue"
-      class="fixed inset-0 bg-slate-900/60 flex items-center justify-center z-10"
+      class="fixed inset-0 bg-slate-900/60 flex items-center justify-center z-30"
     >
       <main class="p-4 bg-white w-[min(400px,80dvw)] relative">
         <slot></slot>

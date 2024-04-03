@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed top-0 right-0">
+  <div class="fixed top-0 right-0 z-10">
     <TransitionGroup
       name="list"
       tag="ul"

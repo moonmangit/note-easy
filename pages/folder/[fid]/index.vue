@@ -162,7 +162,17 @@ const tagCont = useModalForm<NoteTagSchema, NoteTag>({
 });
 async function removeTag(tag: NoteTag) {
   if (!confirm("Are you sure to delete this tag?")) return;
-  await noteTagModel.remove(tag);
+  try {
+    useAppLoading().startLoading();
+    await noteTagModel.remove(tag);
+    // clear tag from filter
+    filterByTags.value = filterByTags.value.filter((t) => t !== tag);
+    useToast().toastSuccess("Tag has been removed.");
+  } catch (error: any) {
+    useToast().toastError(`Failed to remove tag, ${error.message}`);
+  } finally {
+    useAppLoading().stopLoading();
+  }
 }
 
 // Prepare notes

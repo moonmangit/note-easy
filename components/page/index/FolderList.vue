@@ -111,7 +111,15 @@ const cont = useModalForm<NoteFolderSchema, NoteFolder>({
 });
 async function removeFolder(target: NoteFolder) {
   if (!confirm("Are you sure to delete this folder?")) return;
-  await noteFolderModel.remove(target);
+  try {
+    useAppLoading().startLoading();
+    await noteFolderModel.remove(target);
+    useToast().toastSuccess("Folder removed.");
+  } catch (error: any) {
+    useToast().toastError(`Failed to remove folder, ${error.message}`);
+  } finally {
+    useAppLoading().stopLoading();
+  }
 }
 </script>
 
