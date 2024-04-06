@@ -148,7 +148,7 @@ const noteRecordModel = {
     const userDocRef = createUserDocRef();
     const chunkCount = Math.ceil(content.length / perChunkSize);
     const firstChunk = content.slice(0, firstChunkSize);
-    const restChunks = Array.from({ length: chunkCount - 1 }).map((_, i) => {
+    const restChunks = Array.from({ length: chunkCount }, (_, i) => {
       const start = firstChunkSize + i * perChunkSize;
       return content.slice(start, start + perChunkSize);
     });
